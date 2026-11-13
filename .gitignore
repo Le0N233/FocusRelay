@@ -1,0 +1,14 @@
+config.json
+config.json.*
+logs/
+app/
+backup-*/
+*.exe
+*.zip
+*.png
+verification.txt
+startup-error.txt
+dpi-verification.json
+# Reviewed images used by the project overview
+!assets/
+!assets/*.png

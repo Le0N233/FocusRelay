@@ -1,0 +1,17 @@
+{
+  "distractionSeconds": 30,
+  "idleSeconds": 120,
+  "cooldownSeconds": 180,
+  "blockedDomains": ["youtube.com", "youtu.be", "bilibili.com"],
+  "blockedApps": ["steam.exe", "discord.exe", "douyin.exe"],
+  "allowedUrlPrefixes": [],
+  "allowedYouTubeVideoIds": [],
+  "allowedTitlePatterns": [],
+  "totalStudyHours": 2,
+  "breakMinutes": 5,
+  "breakCount": 3,
+  "sessionMinutes": 30,
+  "plannerMode": "breaks",
+  "phoneEnabled": false,
+  "phoneTopic": ""
+}

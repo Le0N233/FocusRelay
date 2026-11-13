@@ -1,0 +1,27 @@
+name: Build Windows app
+on:
+  workflow_dispatch:
+  push:
+    paths: ['**.cs', '**.ps1', '**.manifest', '**.config', '**.json', '.github/workflows/build.yml']
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile GUI executable
+        shell: powershell
+        run: ./Build.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: StudyGuard-win-x64
+          path: |
+            StudyGuard.exe
+            StudyGuard.exe.config
+            *.ps1
+            forest-art.cs
+            config.example.json
+            README.md
+            docs/
+            assets/
