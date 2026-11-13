@@ -1,8 +1,8 @@
-name: Build Windows app
+name: Build FocusRelay for Windows
 on:
   workflow_dispatch:
   push:
-    paths: ['**.cs', '**.ps1', '**.manifest', '**.config', '**.json', '.github/workflows/build.yml']
+    paths: ['src/**', 'scripts/**', 'tests/**', '.github/workflows/build.yml']
 permissions:
   contents: read
 jobs:
@@ -10,18 +10,19 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Compile GUI executable
+      - name: Build
         shell: powershell
-        run: ./Build.ps1
+        run: ./scripts/Build.ps1
+      - name: Check timer, accounting, reminders and desk states
+        shell: powershell
+        run: |
+          $p=Start-Process -FilePath ./artifacts/FocusRelay/FocusRelay.exe -ArgumentList '--smoke-test' -Wait -PassThru
+          if($p.ExitCode -ne 0){Get-Content ./artifacts/FocusRelay/data/startup-error.txt -ErrorAction SilentlyContinue; throw 'Smoke test failed'}
+          Get-Content ./artifacts/FocusRelay/data/verification.txt
+      - name: Package without personal data
+        shell: powershell
+        run: ./scripts/Package.ps1
       - uses: actions/upload-artifact@v4
         with:
-          name: StudyGuard-win-x64
-          path: |
-            StudyGuard.exe
-            StudyGuard.exe.config
-            *.ps1
-            forest-art.cs
-            config.example.json
-            README.md
-            docs/
-            assets/
+          name: FocusRelay-win-x64
+          path: artifacts/FocusRelay-win-x64.zip

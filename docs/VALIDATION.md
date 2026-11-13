@@ -1,4 +1,4 @@
-# Verification record
+﻿# Verification record
 
 [Project overview](../README.md) · [Setup and troubleshooting](SETUP.md)
 
@@ -53,3 +53,8 @@ This is not a claim that the server disconnected or that browser detection never
 - Check actual scrolling on a constrained display and dragging between monitors with different scaling.
 
 Passing fixtures and connecting to the server are not a claim that all these manual checks have passed.
+
+## FocusRelay 1.3 structure and name update
+
+The organized EXE passed the inherited timer, accounting, phone-transition, taskbar and desk-state fixtures. All six standalone module/editor suites passed after their paths moved. A native 150% preview was generated with FocusRelay branding. These checks cover the restructuring and do not resolve the ActivityWatch freshness limitation above.
+

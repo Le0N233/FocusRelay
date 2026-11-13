@@ -1,4 +1,4 @@
-# Setup and technical reference
+﻿# Setup and technical reference
 
 [Back to the project overview](../README.md)
 
@@ -18,11 +18,11 @@ The app is unsigned. Managed computers may restrict it; follow your organisation
 ## Start the portable build
 
 1. Extract the entire Windows portable ZIP into a writable folder.
-2. Keep `StudyGuard.exe`, `StudyGuard.exe.config`, the scripts, `forest-art.cs` and all other supplied files together.
-3. Open `StudyGuard.exe`. First run creates local settings from `config.example.json`, including a random ntfy topic. Phone reminders start disabled.
+2. Keep `FocusRelay.exe`, `FocusRelay.exe.config` and the supplied `app/` folder together. The first launch creates `data/` for settings and history.
+3. Open `FocusRelay.exe`. First run creates local settings from `config.example.json`, including a random ntfy topic. Phone reminders start disabled.
 4. Set up ActivityWatch before relying on activity classifications.
 
-The prepared 1.2.0 Windows archive is named `StudyGuard-1.2.0-win-x64.zip`. A source ZIP or repository clone does not include the compiled executable. The portable archive needs to be attached to a GitHub Release before visitors can download a release build; this document does not assume a published download URL.
+The prepared 1.3.0 Windows archive is named `FocusRelay-win-x64.zip`. A source ZIP or repository clone does not include the compiled executable. The portable archive needs to be attached to a GitHub Release before visitors can download a release build; this document does not assume a published download URL.
 
 ## ActivityWatch and Chrome
 
@@ -99,36 +99,46 @@ Messages contain generic reminders, not browser URLs, window titles or app names
 Run from the source folder in **Windows PowerShell 5.1**, not PowerShell 7:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Build.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Build.ps1
 ```
 
-[Build.ps1](../Build.ps1) uses the Windows .NET Framework C# compiler to compile [Launcher.cs](../Launcher.cs), with [app.manifest](../app.manifest) and an app icon. The resulting EXE still needs its configuration and supporting files.
+[Build.ps1](../scripts/Build.ps1) uses the Windows .NET Framework C# compiler to compile [Launcher.cs](../src/launcher/Program.cs), with [app.manifest](../src/launcher/app.manifest) and an app icon. The resulting EXE still needs its configuration and supporting files.
 
 The launcher sets PowerShell policy for its own process; it does not change user or machine execution policy. Organisational restrictions still apply.
 
 ## Verification
 
-The EXE supports `--preview` to render the interface without starting a session, and `--smoke-test` for fixture-based checks. Run them in a **disposable copy** because local settings, test logs or preview images may be written there. Output is recorded in `verification.txt`.
+The EXE supports `--preview` to render the interface without starting a session, and `--smoke-test` for fixture-based checks. Run them in a **disposable copy** because local settings, test logs or preview images may be written there. Output is recorded in `data/verification.txt`.
 
-The internal preview check also accepts the process environment variable `STUDYGUARD_TEST_SCALE` with values such as `1`, `1.25`, `1.5` or `2`. This simulates layout scale for fixtures; it does not change Windows display settings or replace a physical multi-monitor test.
+The internal preview check also accepts the process environment variable `FOCUSRELAY_TEST_SCALE` with values such as `1`, `1.25`, `1.5` or `2`. This simulates layout scale for fixtures; it does not change Windows display settings or replace a physical multi-monitor test.
 
-[Test-DeskView.ps1](../Test-DeskView.ps1) checks elapsed progress versus credited focus, pause preservation, break state and fresh-page transitions. Fixture tests do not establish real-device notification delivery, learning outcomes or support for every Windows environment.
+[Test-DeskView.ps1](../tests/Test-DeskView.ps1) checks elapsed progress versus credited focus, pause preservation, break state and fresh-page transitions. Fixture tests do not establish real-device notification delivery, learning outcomes or support for every Windows environment.
 
 ## Source map
 
 | File | Role |
 | --- | --- |
-| [Launcher.cs](../Launcher.cs) / [Build.ps1](../Build.ps1) | Graphical EXE host and build |
-| [StudyGuard.ps1](../StudyGuard.ps1) | App and monitoring orchestration |
-| [forest-theme.ps1](../forest-theme.ps1) / [forest-art.cs](../forest-art.cs) | Layout and illustrated session states |
-| [dpi.ps1](../dpi.ps1) | Display-scaling support |
-| [planner.ps1](../planner.ps1) | Work-and-break calculations |
-| [accounting.ps1](../accounting.ps1) / [daily.ps1](../daily.ps1) | Session estimates and daily totals |
-| [rules.ps1](../rules.ps1) / [rules-editor.ps1](../rules-editor.ps1) | Matching rules and editor |
-| [phone.ps1](../phone.ps1) | Phone reminder state |
+| [Launcher.cs](../src/launcher/Program.cs) / [Build.ps1](../scripts/Build.ps1) | Graphical EXE host and build |
+| [FocusRelay.ps1](../src/app/FocusRelay.ps1) | App and monitoring orchestration |
+| [desk-theme.ps1](../src/app/ui/desk-theme.ps1) / [DeskScene.cs](../src/app/ui/DeskScene.cs) | Layout and illustrated session states |
+| [dpi.ps1](../src/app/ui/dpi.ps1) | Display-scaling support |
+| [planner.ps1](../src/app/modules/planner.ps1) | Work-and-break calculations |
+| [accounting.ps1](../src/app/modules/accounting.ps1) / [daily.ps1](../src/app/modules/daily.ps1) | Session estimates and daily totals |
+| [rules.ps1](../src/app/modules/rules.ps1) / [rules-editor.ps1](../src/app/modules/rules-editor.ps1) | Matching rules and editor |
+| [phone.ps1](../src/app/modules/phone.ps1) | Phone reminder state |
 
 ## Before publishing
 
 Exclude personal `config.json`, ntfy topics, logs, ActivityWatch records and backups. Inspect screenshots and commit history, not only current files. The README images are reviewed UI/fixture previews, not exports of personal activity records.
 
 These documentation files do not create a GitHub repository or publish a release.
+
+## FocusRelay 1.3 layout and upgrades
+
+Build with `scripts/Build.ps1`. Output goes to `artifacts/FocusRelay/`. Run `scripts/Package.ps1` to produce `artifacts/FocusRelay-win-x64.zip`; the packager excludes runtime data even if you tested the built application first.
+
+The source is grouped into `src/launcher/`, `src/app/modules/`, `src/app/ui/`, and `tests/`. The release keeps those runtime modules under `app/`, with private settings at `data/config.json` and history at `data/logs/`. Tests remain separate in the source; packaged fixtures are under `app/tests/` for `--smoke-test`.
+
+When upgrading the earlier flat portable layout in place, the first launch copies its root `config.json` and `logs/` into `data/` if no new settings exist. It preserves the existing ntfy topic and history; the original files remain available as a backup. Close the old version before launching FocusRelay. A shared singleton key prevents parallel old/new sessions. It intentionally retains the legacy key internally; visible app names, EXE metadata, menu text and new random topic prefixes use FocusRelay.
+
+The `--preview` command writes `data/desk-preview.png`; the UI fixture writes `data/desk-states.png`. Those use test settings, not personal records. A generated `data/` directory must never be committed or uploaded.

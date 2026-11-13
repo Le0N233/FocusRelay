@@ -1,14 +1,16 @@
-config.json
-config.json.*
-logs/
-app/
-backup-*/
+/artifacts/
+/data/
+**/.test-data/
+**/logs/
+**/config.json
+**/config.json.*
+**/backup-*/
 *.exe
 *.zip
-*.png
 verification.txt
 startup-error.txt
 dpi-verification.json
-# Reviewed images used by the project overview
-!assets/
-!assets/*.png
+smoke-preview.png
+desk-preview.png
+settings-preview.png
+/tests/*.png

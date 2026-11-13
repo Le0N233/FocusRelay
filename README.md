@@ -1,4 +1,4 @@
-# FocusRelay
+﻿# FocusRelay
 
 **A personalised focus and time-management companion for Windows.**
 
@@ -54,17 +54,17 @@ I used **Codex** to research open-source options and perform much of the coding.
 
 ## Run the Windows app
 
-1. Extract the **complete Windows portable ZIP** into a writable folder. Keep all supplied scripts and `StudyGuard.exe.config` beside the EXE.
+1. Extract the **complete Windows portable ZIP** into a writable folder. Keep the supplied `app/` folder and `FocusRelay.exe.config` beside the EXE. Settings and history are stored in `data/`.
 2. Install and start **ActivityWatch Classic**, including its window watcher. This supplies foreground-application data.
-3. Open **`StudyGuard.exe`**. For Chrome webpage reminders, install ActivityWatch Web Watcher through **Settings → Chrome extension**.
+3. Open **`FocusRelay.exe`**. For Chrome webpage reminders, install ActivityWatch Web Watcher through **Settings → Chrome extension**.
 4. Start a focus session and check the status. **Website detection active** confirms URL coverage for the foreground browser; **App monitoring active** alone does not confirm webpage detection.
 
 The EXE opens the graphical application without a terminal window. It is a **portable launcher**, not an installer or a self-contained single-file application. ActivityWatch is a separate requirement and is not bundled.
 
 - [Setup, daily use, building and verification](docs/SETUP.md)
 - [Current verification results and remaining checks](docs/VALIDATION.md)
-- [Launcher](Launcher.cs) · [Build script](Build.ps1)
-- [Interface layout](forest-theme.ps1) · [Desk illustration](forest-art.cs)
+- [Launcher](src/launcher/Program.cs) · [Build script](scripts/Build.ps1)
+- [Interface layout](src/app/ui/desk-theme.ps1) · [Desk illustration](src/app/ui/DeskScene.cs)
 
 A source download does not include the compiled executable; the portable Windows ZIP is a separate release asset.
 
@@ -87,7 +87,7 @@ ActivityWatch may retain URLs and window titles locally. Configuration and diagn
 ### Optional phone notifications
 
 - Each fresh configuration generates a random ntfy topic locally. The app does not send this topic to the project author or provide an author-managed dashboard for viewing users' topics.
-- The topic is stored in plain text in local `config.json`. Access depends on folder permissions: another account, administrator or program with permission to read that file can also read the topic. Local storage is not an additional encryption layer.
+- The topic is stored in plain text in local `data/config.json`. Access depends on folder permissions: another account, administrator or program with permission to read that file can also read the topic. Local storage is not an additional encryption layer.
 - When phone reminders are enabled, the topic and reminder messages are sent over HTTPS to `ntfy.sh`; the phone also stores its subscription. Only reminder messages are sent, not browsing URLs, window titles or activity histories.
 - Treat the complete topic name like a password. The current integration has no additional account authentication: someone who obtains the topic may subscribe or publish to it. See [ntfy's access-control documentation](https://docs.ntfy.sh/config/#access-control) and [privacy policy](https://docs.ntfy.sh/privacy/).
 
@@ -99,3 +99,18 @@ Built with [ActivityWatch](https://github.com/ActivityWatch/activitywatch), [Act
 
 No project `LICENSE` has been added yet. Third-party components remain subject to their own licences.
 
+
+## Project layout
+
+```text
+FocusRelay/
+  src/        # EXE launcher and application modules
+  scripts/    # Build and clean distribution packaging
+  tests/      # Timer, accounting, reminder and UI fixtures
+  docs/       # Setup and verification records
+  assets/     # Reviewed screenshots for this page
+  .github/    # Windows build workflow
+  README.md
+```
+
+The portable distribution has a separate layout: `FocusRelay.exe`, its configuration, `app/` for supporting code, and `data/` created on first launch. No CMD launcher is required. Build outputs are ignored under `artifacts/` rather than mixed into the source tree. Reorganizing the modules does not combine them into a single-file executable.
